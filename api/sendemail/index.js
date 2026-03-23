@@ -1,14 +1,14 @@
 const nodemailer = require("nodemailer");
 
-module.exports = async (req, res) => {
-    if (req.method !== "POST") {
-        return res.status(405).send("Method not allowed");
-    }
-
+module.exports = async function (context, req) {
     const { email } = req.body || {};
 
     if (!email) {
-        return res.status(400).send("Email is required");
+        context.res = {
+            status: 400,
+            body: "Email is required"
+        };
+        return;
     }
 
     const transporter = nodemailer.createTransport({
@@ -27,9 +27,16 @@ module.exports = async (req, res) => {
             text: `User email: ${email}`
         });
 
-        res.status(200).send("Email sent successfully");
+        context.res = {
+            status: 200,
+            body: "Email sent successfully"
+        };
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Failed to send email");
+        context.log("EMAIL ERROR:", err);
+
+        context.res = {
+            status: 500,
+            body: err.message
+        };
     }
 };
