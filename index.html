@@ -92,6 +92,8 @@ form.addEventListener('submit', async (e) => {
     message.textContent = 'Thanks for your request, our executive will contact you soon.';
     form.reset();
   } catch (err) {
+    console.error("EMAIL ERROR:", err);   // 👈 important
+    res.status(500).send(err.message);    // 👈 return actual error
     console.error(err);
     message.style.color = '#ff6961';
     message.textContent = 'Failed to send demo request. ' + err.message;
