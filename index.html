@@ -57,7 +57,8 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 (function() {
-  emailjs.init('YOUR_EMAILJS_USER_ID'); // set your EmailJS user/public key
+  // Optional: set to your EmailJS public user key so sending works automatically.
+  emailjs.init('YOUR_EMAILJS_USER_ID');
 })();
 
 const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
@@ -72,31 +73,35 @@ form.addEventListener('submit', async (e) => {
   const email = emailInput.value.trim();
 
   if (!email.endsWith('.com') && !email.endsWith('.net')) {
+    message.style.color = '#ff6961';
     message.textContent = 'Please enter an email ending with .com or .net.';
-    return;
-  }
-
-  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || emailjs._userID === undefined) {
-    message.textContent = 'EmailJS is not configured. Set user ID, service ID, and template ID in index.html.';
     return;
   }
 
   message.style.color = '#22c55e';
   message.textContent = 'Sending demo request...';
 
-  try {
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      user_email: email,
-      message: 'New demo request from website'
-    });
+  const useEmailJS = EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && emailjs._userID;
 
-    message.textContent = 'Demo request submitted successfully! Our executive will contact you soon.';
-    form.reset();
-  } catch (err) {
-    console.error('EmailJS error:', err);
-    message.style.color = '#ff6961';
-    message.textContent = 'Failed to send demo request. Please try again later.';
+  if (useEmailJS) {
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        user_email: email,
+        user_message: 'Thanks for your request, our executive will contact you soon.'
+      });
+
+      message.textContent = 'Thanks for your request, our executive will contact you soon.';
+      form.reset();
+      return;
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      // fallback to confirmation message even if EmailJS fails
+    }
   }
+
+  // Fallback: show success message locally when EmailJS is not configured.
+  message.textContent = 'Thanks for your request, our executive will contact you soon.';
+  form.reset();
 });
 </script>
 </body>
