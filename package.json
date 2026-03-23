@@ -4,6 +4,7 @@
   "description": "AI Agent site with email submission",
   "main": "server.js",
   "scripts": {
+    "build": "echo \"No build required\"",
     "start": "node server.js"
   },
   "dependencies": {
