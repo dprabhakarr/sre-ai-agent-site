@@ -46,21 +46,44 @@
 
 <div class="section" id="demo">
   <h2>Request Demo</h2>
-  <form action="/submit" method="POST">
-    <input type="email" name="email" placeholder="Enter your email" required />
+  <form id="demoForm">
+    <input type="email" id="emailInput" name="email" placeholder="Enter your email" required />
     <button type="submit">Submit</button>
   </form>
+  <p id="message" style="color: #22c55e; margin-top: 10px;"></p>
 </div>
   </div>
 
 <script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    const email = document.querySelector('input[type="email"]').value;
-    if (!email.endsWith('.com') && !email.endsWith('.net')) {
-        alert('Please enter a valid email address.');
-        e.preventDefault();
-    }
-    // else let it submit
+const form = document.getElementById('demoForm');
+const emailInput = document.getElementById('emailInput');
+const message = document.getElementById('message');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = emailInput.value.trim();
+
+  if (!email.endsWith('.com') && !email.endsWith('.net')) {
+    message.textContent = 'Please enter an email ending with .com or .net.';
+    return;
+  }
+
+  message.textContent = 'Sending demo request...';
+
+  try {
+    // Replace with your own Formspree endpoint or EmailJS setup if needed.
+    await fetch('https://formspree.io/f/{YOUR_FORM_ID}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    message.textContent = 'Demo request submitted successfully! Our executive will contact you soon.';
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    message.textContent = 'Failed to send demo request. Please try again later.';
+  }
 });
 </script>
 </body>
