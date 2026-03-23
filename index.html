@@ -46,8 +46,8 @@
 
 <div class="section" id="demo">
   <h2>Request Demo</h2>
-  <form>
-    <input type="email" placeholder="Enter your email" required />
+  <form action="/submit" method="POST">
+    <input type="email" name="email" placeholder="Enter your email" required />
     <button type="submit">Submit</button>
   </form>
 </div>
@@ -58,10 +58,9 @@ document.querySelector('form').addEventListener('submit', function(e) {
     const email = document.querySelector('input[type="email"]').value;
     if (!email.endsWith('.com') && !email.endsWith('.net')) {
         alert('Please enter a valid email address.');
-        return;
+        e.preventDefault();
     }
-    e.preventDefault();
-    alert('Demo request submitted successfully!. our executive will contact you soon');
+    // else let it submit
 });
 </script>
 </body>
