@@ -54,10 +54,10 @@
 </div>
   </div>
 
-<script>
+  <script>
 const API_URL = window.location.hostname.includes('localhost')
-  ? 'http://localhost:3000/api/send-email'
-  : '/api/send-email';
+  ? 'http://localhost:3001/api/sendEmail'
+  : '/api/sendEmail';
 
 const form = document.getElementById('demoForm');
 const emailInput = document.getElementById('emailInput');
@@ -67,9 +67,10 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = emailInput.value.trim();
 
-  if (!email.endsWith('.com') && !email.endsWith('.net')) {
+  // ✅ Better validation
+  if (!email.includes('@')) {
     message.style.color = '#ff6961';
-    message.textContent = 'Please enter an email ending with .com or .net.';
+    message.textContent = 'Please enter a valid email address.';
     return;
   }
 
@@ -97,5 +98,6 @@ form.addEventListener('submit', async (e) => {
   }
 });
 </script>
+
 </body>
 </html>

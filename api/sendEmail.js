@@ -27,9 +27,9 @@ module.exports = async (req, res) => {
             text: `User email: ${email}`
         });
 
-        res.status(200).send("Email sent");
+        res.status(200).send("Email sent successfully");
     } catch (err) {
         console.error(err);
-        res.status(500).send("Error sending email");
+        res.status(500).send("Failed to send email");
     }
 };
