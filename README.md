@@ -30,22 +30,26 @@ A landing page for an AI-powered SRE (Site Reliability Engineering) agent that d
 ## Email Configuration
 
 ### For Testing (Default)
-The app automatically uses Ethereal Email for testing. No setup required - emails go to a virtual inbox.
+The app automatically uses Ethereal Email for testing when no credentials are present. You can view HTML previews from the function log output (via `nodemailer.getTestMessageUrl`).
 
-### For Production (Gmail)
-1. **Enable 2-Factor Authentication** on your Gmail account: https://myaccount.google.com/security
-2. **Generate an App Password**: 
-   - Go to https://myaccount.google.com/apppasswords
-   - Select "Mail" and "Other (custom name)"
-   - Enter "SRE Demo Site" as the name
-   - Copy the 16-character password
-3. **Set environment variables**:
-   ```
-   GMAIL_USER=your-gmail@gmail.com
-   GMAIL_APP_PASSWORD=your-16-character-app-password
-   EMAIL_RECIPIENT=recipient@example.com
-   ```
-4. **Restart the server** - it will automatically use Gmail when credentials are present
+### For Production (SendGrid recommended)
+1. Sign up at https://sendgrid.com and obtain an API key.
+2. Set `SENDGRID_API_KEY` in your environment.
+3. Set email destinations:
+   - `MAIL_FROM=noreply@your-domain.com`
+   - `EMAIL_RECIPIENT=recipient@your-domain.com`
+
+### Optional Gmail SMTP (not recommended for SWA)
+If you need Gmail SMTP, enable 2FA and create an app password:
+1. https://myaccount.google.com/security
+2. https://myaccount.google.com/apppasswords
+3. Set env variables:
+   - `EMAIL_USER=your-gmail@gmail.com`
+   - `EMAIL_PASS=your-gmail-app-password`
+   - `MAIL_FROM=your-gmail@gmail.com`
+   - `EMAIL_RECIPIENT=recipient@your-domain.com`
+
+On SWA, Gmail SMTP may be blocked by outbound network policy. Use SendGrid or another API-based provider for reliable production delivery.
 
 ## Deployment
 
