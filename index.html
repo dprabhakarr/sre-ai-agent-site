@@ -54,16 +54,7 @@
 </div>
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-(function() {
-  // Optional: set to your EmailJS public user key so sending works automatically.
-  emailjs.init('YOUR_EMAILJS_USER_ID');
-})();
-
-const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-
 const form = document.getElementById('demoForm');
 const emailInput = document.getElementById('emailInput');
 const message = document.getElementById('message');
@@ -81,27 +72,25 @@ form.addEventListener('submit', async (e) => {
   message.style.color = '#22c55e';
   message.textContent = 'Sending demo request...';
 
-  const useEmailJS = EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && emailjs._userID;
+  try {
+    const res = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
 
-  if (useEmailJS) {
-    try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        user_email: email,
-        user_message: 'Thanks for your request, our executive will contact you soon.'
-      });
-
-      message.textContent = 'Thanks for your request, our executive will contact you soon.';
-      form.reset();
-      return;
-    } catch (err) {
-      console.error('EmailJS error:', err);
-      // fallback to confirmation message even if EmailJS fails
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || 'Failed to send email');
     }
-  }
 
-  // Fallback: show success message locally when EmailJS is not configured.
-  message.textContent = 'Thanks for your request, our executive will contact you soon.';
-  form.reset();
+    message.textContent = 'Thanks for your request, our executive will contact you soon.';
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    message.style.color = '#ff6961';
+    message.textContent = 'Failed to send demo request. ' + err.message;
+  }
 });
 </script>
 </body>
