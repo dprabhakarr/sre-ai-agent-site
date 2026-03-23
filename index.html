@@ -54,8 +54,15 @@
 </div>
   </div>
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-const FORMSPREE_ID = ''; // <-- set your Formspree form ID, e.g. "myFormId" (DO NOT leave empty in production)
+(function() {
+  emailjs.init('YOUR_EMAILJS_USER_ID'); // set your EmailJS user/public key
+})();
+
+const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
 const form = document.getElementById('demoForm');
 const emailInput = document.getElementById('emailInput');
 const message = document.getElementById('message');
@@ -69,29 +76,25 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  if (!FORMSPREE_ID) {
-    message.textContent = 'Form endpoint not configured. Please set FORMSPREE_ID in index.html.';
+  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || emailjs._userID === undefined) {
+    message.textContent = 'EmailJS is not configured. Set user ID, service ID, and template ID in index.html.';
     return;
   }
 
+  message.style.color = '#22c55e';
   message.textContent = 'Sending demo request...';
 
   try {
-    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      user_email: email,
+      message: 'New demo request from website'
     });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Formspree response ${res.status}: ${errText}`);
-    }
 
     message.textContent = 'Demo request submitted successfully! Our executive will contact you soon.';
     form.reset();
   } catch (err) {
-    console.error(err);
+    console.error('EmailJS error:', err);
+    message.style.color = '#ff6961';
     message.textContent = 'Failed to send demo request. Please try again later.';
   }
 });
