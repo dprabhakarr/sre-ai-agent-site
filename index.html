@@ -55,6 +55,7 @@
   </div>
 
 <script>
+const FORMSPREE_ID = ''; // <-- set your Formspree form ID, e.g. "myFormId" (DO NOT leave empty in production)
 const form = document.getElementById('demoForm');
 const emailInput = document.getElementById('emailInput');
 const message = document.getElementById('message');
@@ -68,15 +69,24 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
+  if (!FORMSPREE_ID) {
+    message.textContent = 'Form endpoint not configured. Please set FORMSPREE_ID in index.html.';
+    return;
+  }
+
   message.textContent = 'Sending demo request...';
 
   try {
-    // Replace with your own Formspree endpoint or EmailJS setup if needed.
-    await fetch('https://formspree.io/f/{YOUR_FORM_ID}', {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Formspree response ${res.status}: ${errText}`);
+    }
 
     message.textContent = 'Demo request submitted successfully! Our executive will contact you soon.';
     form.reset();
